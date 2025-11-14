@@ -4,7 +4,7 @@
 
 # NokiHbrAuto
 
-此工具基于oepncv图像识别与模拟器ADB控制，点击这里[下载](https://github.com/nokiruy/Noki-hbr-Auto/releases)
+此工具基于oepncv图像识别与模拟器ADB控制，25.11开始更新PC端后台的适配，点击这里[下载](https://github.com/nokiruy/Noki-hbr-Auto/releases)
 
 
 </div>
