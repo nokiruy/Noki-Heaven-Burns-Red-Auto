@@ -42,7 +42,7 @@
 1. **下载可执行文件**  
    - 前往 [Releases页面](https://github.com/nokiruy/Noki-hbr-Auto/releases)
    - 选择最新版本的 `Noki_HBR_Auto-v*.*.*.exe`
-   - [视频教程](https://www.bilibili.com/video/BV1czUvBWEoe/)，用户交流QQ群：1040361298  
+   - [点击跳转视频教程](https://www.bilibili.com/video/BV1czUvBWEoe/)，用户交流QQ群：1040361298  
 
 
 本项目基于以下技术实现：
