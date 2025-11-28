@@ -11,13 +11,11 @@
 
 namespace fs = std::filesystem;
 
-// È«¾Ö±äÁ¿
 HWND g_hWnd = NULL;
 HWND g_hStaticText = NULL;
 HWND g_hProgressBar = NULL;
 const wchar_t* g_windowClass = L"NokiLauncherWindow";
 
-// Ç°ÏòÉùÃ÷º¯Êı
 void ShowErrorMessage(const std::wstring& message);
 void checkAndLaunch(HWND hwnd);
 void HandleErrorMessage(HWND hwnd, LPARAM lParam);
@@ -27,7 +25,6 @@ void UpdateProgress(int percentage, const std::wstring& message);
 bool IsRunningAsAdmin();
 bool RestartAsAdmin();
 
-// ¼ì²éÊÇ·ñÒÔ¹ÜÀíÔ±È¨ÏŞÔËĞĞ
 bool IsRunningAsAdmin() {
     BOOL isAdmin = FALSE;
     PSID adminGroup = NULL;
@@ -44,7 +41,6 @@ bool IsRunningAsAdmin() {
     return isAdmin == TRUE;
 }
 
-// ÒÔ¹ÜÀíÔ±È¨ÏŞÖØĞÂÆô¶¯³ÌĞò
 bool RestartAsAdmin() {
     wchar_t currentPath[MAX_PATH];
     GetModuleFileNameW(NULL, currentPath, MAX_PATH);
@@ -58,12 +54,10 @@ bool RestartAsAdmin() {
     return ShellExecuteExW(&sei) == TRUE;
 }
 
-// ÏÔÊ¾´íÎóµ¯´°
 void ShowErrorMessage(const std::wstring& message) {
-    MessageBoxW(NULL, message.c_str(), L"Æô¶¯Æ÷´íÎó", MB_ICONERROR | MB_OK);
+    MessageBoxW(NULL, message.c_str(), L"å¯åŠ¨å™¨é”™è¯¯", MB_ICONERROR | MB_OK);
 }
 
-// ¸üĞÂ½ø¶ÈÌõºÍ×´Ì¬ÎÄ±¾
 void UpdateProgress(int percentage, const std::wstring& message) {
     if (g_hStaticText) {
         SetWindowTextW(g_hStaticText, message.c_str());
@@ -73,31 +67,24 @@ void UpdateProgress(int percentage, const std::wstring& message) {
     }
 }
 
-// ¼ì²éºÍÆô¶¯Ä¿±ê³ÌĞòµÄº¯Êı
 void checkAndLaunch(HWND hwnd) {
-    // »ñÈ¡µ±Ç°¿ÉÖ´ĞĞÎÄ¼şÂ·¾¶
     wchar_t current_path[MAX_PATH];
     GetModuleFileNameW(NULL, current_path, MAX_PATH);
     fs::path current_dir = fs::path(current_path).parent_path();
 
-    // Ä¿±êexeÂ·¾¶
     fs::path exe_path = current_dir / "dist" / "Noki_HBR_Auto.exe";
 
     try {
-        // ²½Öè1: ³õÊ¼»¯¼ì²é
-        UpdateProgress(10, L"ÕıÔÚ³õÊ¼»¯...");
+        UpdateProgress(10, L"æ­£åœ¨åˆå§‹åŒ–...");
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-        // ²½Öè2: ¼ì²éÄ¿±êÎÄ¼ş
-        UpdateProgress(30, L"¼ì²éÄ¿±êÎÄ¼şÊÇ·ñ´æÔÚ...");
+        UpdateProgress(30, L"æ£€æŸ¥ç›®æ ‡æ–‡ä»¶æ˜¯å¦å­˜åœ¨...");
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        // ¼ì²éÎÄ¼şÊÇ·ñ´æÔÚ
         if (fs::exists(exe_path)) {
-            UpdateProgress(60, L"ÕıÔÚÆô¶¯Ä¿±ê³ÌĞò...");
+            UpdateProgress(60, L"æ­£åœ¨å¯åŠ¨ç›®æ ‡ç¨‹åº...");
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-            // Æô¶¯exe³ÌĞò
             STARTUPINFOW si = { sizeof(si) };
             PROCESS_INFORMATION pi;
 
@@ -116,59 +103,49 @@ void checkAndLaunch(HWND hwnd) {
                 &si,
                 &pi
             )) {
-                // ³É¹¦Æô¶¯
                 CloseHandle(pi.hProcess);
                 CloseHandle(pi.hThread);
 
-                // ÏÔÊ¾³É¹¦ÏûÏ¢
-                UpdateProgress(100, L"Æô¶¯³É¹¦£¡");
+                UpdateProgress(100, L"å¯åŠ¨æˆåŠŸï¼");
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-                // ·¢ËÍ¹Ø±ÕÏûÏ¢µ½Ö÷´°¿Ú
                 PostMessage(hwnd, WM_CLOSE, 0, 0);
             }
             else {
-                // Æô¶¯Ê§°Ü
                 DWORD error = GetLastError();
-                std::wstring error_msg = L"ÎŞ·¨Æô¶¯³ÌĞò: " + exe_path.wstring() +
-                    L"\n´íÎó´úÂë: " + std::to_wstring(error);
+                std::wstring error_msg = L"æ— æ³•å¯åŠ¨ç¨‹åº: " + exe_path.wstring() +
+                    L"\né”™è¯¯ä»£ç : " + std::to_wstring(error);
 
-                // ÔÚUIÏß³ÌÖĞÏÔÊ¾´íÎó
                 PostMessage(hwnd, WM_USER + 1, 0, (LPARAM)new std::wstring(error_msg));
             }
         }
         else {
-            // ÎÄ¼ş²»´æÔÚ
-            std::wstring error_msg = L"Ä¿±ê³ÌĞò²»´æÔÚ:\n" + exe_path.wstring();
+            std::wstring error_msg = L"ç›®æ ‡ç¨‹åºä¸å­˜åœ¨:\n" + exe_path.wstring();
             PostMessage(hwnd, WM_USER + 1, 0, (LPARAM)new std::wstring(error_msg));
         }
     }
     catch (const std::exception& e) {
         std::string error_str = e.what();
-        std::wstring error_msg = L"·¢ÉúÒì³£: " + std::wstring(error_str.begin(), error_str.end());
+        std::wstring error_msg = L"å‘ç”Ÿå¼‚å¸¸: " + std::wstring(error_str.begin(), error_str.end());
         PostMessage(hwnd, WM_USER + 1, 0, (LPARAM)new std::wstring(error_msg));
     }
 }
 
-// ´¦Àí×Ô¶¨ÒåÏûÏ¢£¨´íÎóÏÔÊ¾£©
 void HandleErrorMessage(HWND hwnd, LPARAM lParam) {
     std::wstring* error_msg = (std::wstring*)lParam;
     ShowErrorMessage(*error_msg);
-    delete error_msg; // ÊÍ·ÅÄÚ´æ
+    delete error_msg; 
 
-    // ¹Ø±Õ´°¿Ú
     PostMessage(hwnd, WM_CLOSE, 0, 0);
 }
 
-// ´°¿Ú¹ı³Ìº¯Êı
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE:
     {
-        // ´´½¨±êÌâÎÄ±¾
         HWND hTitle = CreateWindowW(
             L"STATIC",
-            L"NokiÆô¶¯Æ÷ (¹ÜÀíÔ±Ä£Ê½)",
+            L"Nokiå¯åŠ¨å™¨ (ç®¡ç†å‘˜æ¨¡å¼)",
             WS_VISIBLE | WS_CHILD | SS_CENTER,
             10, 15, 380, 25,
             hwnd,
@@ -177,18 +154,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             NULL
         );
 
-        // ÉèÖÃ±êÌâ×ÖÌå
+    
         HFONT hTitleFont = CreateFontW(
             20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Î¢ÈíÑÅºÚ"
+            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"å¾®è½¯é›…é»‘"
         );
         SendMessage(hTitle, WM_SETFONT, (WPARAM)hTitleFont, TRUE);
 
-        // ´´½¨×´Ì¬ÎÄ±¾
+
         g_hStaticText = CreateWindowW(
             L"STATIC",
-            L"ÕıÔÚ³õÊ¼»¯...",
+            L"æ­£åœ¨åˆå§‹åŒ–...",
             WS_VISIBLE | WS_CHILD | SS_CENTER,
             10, 50, 380, 25,
             hwnd,
@@ -197,17 +174,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             NULL
         );
 
-        // ÉèÖÃ×´Ì¬ÎÄ±¾×ÖÌå
+  
         HFONT hStatusFont = CreateFontW(
             14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Î¢ÈíÑÅºÚ"
+            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"å¾®è½¯é›…é»‘"
         );
         SendMessage(g_hStaticText, WM_SETFONT, (WPARAM)hStatusFont, TRUE);
 
-        // ´´½¨½ø¶ÈÌõ
+ 
         g_hProgressBar = CreateWindowW(
-            PROGRESS_CLASSW,  // ½ø¶ÈÌõÀàÃû
+            PROGRESS_CLASSW,  
             NULL,
             WS_VISIBLE | WS_CHILD | PBS_SMOOTH,
             50, 85, 300, 20,
@@ -217,11 +194,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             NULL
         );
 
-        // ÉèÖÃ½ø¶ÈÌõ·¶Î§ 0-100
+
         SendMessage(g_hProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
         SendMessage(g_hProgressBar, PBM_SETPOS, 0, 0);
 
-        // Æô¶¯¼ì²éÏß³Ì
         std::thread(checkAndLaunch, hwnd).detach();
     }
     break;
@@ -244,7 +220,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-// ×¢²á´°¿ÚÀà
 BOOL RegisterWindowClass(HINSTANCE hInstance) {
     WNDCLASSW wc = {};
     wc.lpfnWndProc = WindowProc;
@@ -261,12 +236,11 @@ BOOL RegisterWindowClass(HINSTANCE hInstance) {
     return RegisterClassW(&wc);
 }
 
-// ´´½¨´°¿Ú
 HWND CreateMainWindow(HINSTANCE hInstance) {
     HWND hwnd = CreateWindowExW(
         0,
         g_windowClass,
-        L"NokiÆô¶¯Æ÷ (¹ÜÀíÔ±Ä£Ê½)",
+        L"Nokiå¯åŠ¨å™¨ (ç®¡ç†å‘˜æ¨¡å¼)",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
         CW_USEDEFAULT, CW_USEDEFAULT, 420, 180,
         NULL,
@@ -278,51 +252,45 @@ HWND CreateMainWindow(HINSTANCE hInstance) {
     return hwnd;
 }
 
-// WindowsÓ¦ÓÃ³ÌĞòÈë¿Úµã
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // ¼ì²éÊÇ·ñÒÔ¹ÜÀíÔ±È¨ÏŞÔËĞĞ
+
     if (!IsRunningAsAdmin()) {
-        // Èç¹û²»ÊÇ¹ÜÀíÔ±£¬ÇëÇóÌáÉıÈ¨ÏŞ
+
         if (RestartAsAdmin()) {
-            return 0; // µ±Ç°ÊµÀıÍË³ö£¬µÈ´ı¹ÜÀíÔ±È¨ÏŞµÄÊµÀıÆô¶¯
+            return 0; 
         }
         else {
-            ShowErrorMessage(L"ĞèÒª¹ÜÀíÔ±È¨ÏŞ²ÅÄÜÔËĞĞ´Ë³ÌĞò¡£\nÇëÓÒ¼üµã»÷³ÌĞò£¬Ñ¡Ôñ'ÒÔ¹ÜÀíÔ±Éí·İÔËĞĞ'¡£");
+            ShowErrorMessage(L"éœ€è¦ç®¡ç†å‘˜æƒé™æ‰èƒ½è¿è¡Œæ­¤ç¨‹åºã€‚\nè¯·å³é”®ç‚¹å‡»ç¨‹åºï¼Œé€‰æ‹©'ä»¥ç®¡ç†å‘˜èº«ä»½è¿è¡Œ'ã€‚");
             return 1;
         }
     }
-
-    // ³õÊ¼»¯Í¨ÓÃ¿Ø¼ş
+  
     INITCOMMONCONTROLSEX icex;
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC = ICC_PROGRESS_CLASS;
     InitCommonControlsEx(&icex);
 
-    // ×¢²á´°¿ÚÀà
+ 
     if (!RegisterWindowClass(hInstance)) {
-        ShowErrorMessage(L"ÎŞ·¨×¢²á´°¿ÚÀà");
+        ShowErrorMessage(L"æ— æ³•æ³¨å†Œçª—å£ç±»");
         return 1;
     }
 
-    // ´´½¨´°¿Ú
     g_hWnd = CreateMainWindow(hInstance);
     if (!g_hWnd) {
-        ShowErrorMessage(L"ÎŞ·¨´´½¨´°¿Ú");
+        ShowErrorMessage(L"æ— æ³•åˆ›å»ºçª—å£");
         return 1;
     }
 
-    // ¾ÓÖĞÏÔÊ¾´°¿Ú
     RECT rc;
     GetWindowRect(g_hWnd, &rc);
     int x = (GetSystemMetrics(SM_CXSCREEN) - (rc.right - rc.left)) / 2;
     int y = (GetSystemMetrics(SM_CYSCREEN) - (rc.bottom - rc.top)) / 2;
     SetWindowPos(g_hWnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
-    // ÏÔÊ¾´°¿Ú
     ShowWindow(g_hWnd, nCmdShow);
     UpdateWindow(g_hWnd);
 
-    // ÏûÏ¢Ñ­»·
     MSG msg = {};
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
