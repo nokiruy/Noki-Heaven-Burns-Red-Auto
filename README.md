@@ -47,8 +47,9 @@
 ## 下载与使用教程
 1. **下载可执行文件**  
    - 前往 [Releases页面](https://github.com/nokiruy/Noki-hbr-Auto/releases)
-   - 选择最新版本的 `Noki_HBR_Auto-v*.*.*.exe`
-   - 作者b站主页的关于脚本的视频的分P中有教程，也可在用户交流QQ群：1040361298  内我求助
+   - 游戏语言为简中，下载Noki_HBR_Auto-v...-Chinese (Simplified).exe
+   - 游戏语言为繁中，下载Noki_HBR_Auto-v...-Chinese (Traditional).exe
+   - 作者b站主页的关于脚本的视频的分P中有教程，也可在用户交流内我求助
 
 
 本项目基于以下技术实现：
@@ -58,5 +59,5 @@
 
 
 ## 交流与反馈
-- 问题反馈与用户交流QQ群：1040361298  
+- 交流、下载、求助群：简中服：1040361298，繁中服：1071135001
 
